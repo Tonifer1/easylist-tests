@@ -3,9 +3,19 @@
 
 # Robot Framework results and logs
 results/
-*.log
+*.log.html
 *.tmp
+*.output.xml
+*.report.html
 
 # Temporary / backup files
 *.bak
 *.swp
+
+#Documents
+documents/
+
+# Environment variables
+.env
+
+__pycache__/
