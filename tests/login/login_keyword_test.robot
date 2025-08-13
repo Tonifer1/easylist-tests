@@ -15,7 +15,7 @@ Login And Get Token
     ${data}=    Create Dictionary    username=${USERNAME}    password=${PASSWORD}
     ${response}=    POST On Session    auth    ${LOGIN_ENDPOINT}    json=${data}
     Should Be Equal As Numbers    ${response.status_code}    200
-    ${json}=    Evaluate    $response.json()
+    ${json}=    SetVariable     ${response.json()}
     ${ACCESTOKEN}=    Get From Dictionary    ${json}    access
     RETURN    ${ACCESTOKEN}
    

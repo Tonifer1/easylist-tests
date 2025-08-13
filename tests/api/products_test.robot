@@ -32,6 +32,33 @@ Get Products Should Return Valid Data
     Should Not Be Empty    ${first_product}[product_name]
     
     
+
+No Token 
+    [Documentation]    Try To Get Products without Login and Token
+    Create Session    prod    ${BASE_URL}
+    ${response}=    GET On Session    prod    ${PRODUCTS_ENDPOINT}    expected_status=401
+    
+    # Content-Type on JSON
+    ${ct}=    Get From Dictionary    ${response.headers}    Content-Type
+    Should Start With    ${ct}    application/json
+    ${wa}=    Get From Dictionary    ${response.headers}    WWW-Authenticate    
+    Should Start With    ${wa}    Bearer
+
+     # Error Body, No Product
+    ${body}=    Set Variable    ${response.json()}
+    Dictionary Should Contain Key    ${body}    detail
+
+  
+    ${keys}=    Get Dictionary Keys    ${body}
+    List Should Not Contain Value     ${keys}    id
+    List Should Not Contain Value     ${keys}    name
+    
+    
+  
+   
+    
+    
+    
            
   
 
