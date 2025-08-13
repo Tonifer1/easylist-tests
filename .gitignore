@@ -17,8 +17,8 @@ documents/
 # Python cache
 __pycache__/
 
-/output.xml
-/log.html
-/report.html
+*output.xml
+*log.html
+*report.html
 
 
