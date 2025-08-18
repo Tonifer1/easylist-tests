@@ -2,11 +2,16 @@
 Library        RequestsLibrary
 Library        Collections
 Library        OperatingSystem
+Library    String
 Resource    ../login/login_keyword_test.robot
+Suite Setup      Init Test IDs
+Suite Teardown   Teardown Product And Category
+
 
 *** Variables ***
 
 ${PRODUCTS_ENDPOINT}    /api/products/
+${CATEGORIES_ENDPOINT}    /api/categories/
 
 *** Keywords ***
 Fetch Products
@@ -14,8 +19,29 @@ Fetch Products
     ${token}=    Login And Get Token
     Create Session    prod    ${BASE_URL}
     ${headers}=    Create Dictionary    Authorization=Bearer ${token}
+    Log    ${headers}
     ${response}=    GET On Session    prod    ${PRODUCTS_ENDPOINT}    headers=${headers}
     RETURN    ${response}
+
+Init Test IDs
+    [Documentation]    Nollaa id:t turvallista siivousta varten
+    Set Suite Variable    ${SUITE_PRODUCT_ID}     ${None}
+    Set Suite Variable    ${SUITE_CATEGORY_ID}    ${None}
+
+Delete Product If Exists
+    Run Keyword If    '${SUITE_PRODUCT_ID}' != 'None'
+    ...    DELETE On Session    prod    /api/products/${SUITE_PRODUCT_ID}
+
+Delete Category If Exists
+    Run Keyword If    '${SUITE_CATEGORY_ID}' != 'None'
+    ...    DELETE On Session    prod    /api/categories/${SUITE_CATEGORY_ID}
+
+Teardown Product And Category
+    [Documentation]    Poista ensin tuote, sitten kategoria (FK-riippuvuus)
+    Delete Product If Exists
+    Delete Category If Exists
+
+
 
 *** Test Cases ***
 Get Products Should Return Valid Data
@@ -27,11 +53,12 @@ Get Products Should Return Valid Data
     
     # Verify first product structure
     ${first_product}=    Get From List    ${products}    0
+    
     Dictionary Should Contain Key    ${first_product}    product_name
-    Dictionary Should Contain Key    ${first_product}    product_id
     Should Not Be Empty    ${first_product}[product_name]
-    
-    
+
+    Dictionary Should Contain Key    ${first_product}    product_id
+    Should Not Be String    ${first_product}[product_id] 
 
 No Token 
     [Documentation]    Try To Get Products without Login and Token
@@ -52,6 +79,8 @@ No Token
     ${keys}=    Get Dictionary Keys    ${body}
     List Should Not Contain Value     ${keys}    id
     List Should Not Contain Value     ${keys}    name
+
+
     
     
   
