@@ -17,6 +17,4 @@ Login And Get Token
     Should Be Equal As Numbers    ${response.status_code}    200
     ${json}=    SetVariable     ${response.json()}
     ${ACCESTOKEN}=    Get From Dictionary    ${json}    access
-    RETURN    ${ACCESTOKEN}
-   
-
+    RETURN    ${ACCESTOKEN} 

@@ -1,7 +1,7 @@
 *** Settings ***
 Library        RequestsLibrary
 Library        Collections
-Resource       login_keyword_test.robot    # tuodaan Login And Get Token
+Resource       ../resources/auth_keywords.resource    # tuodaan Login And Get Token
 
 *** Variables ***
 
