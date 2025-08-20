@@ -1,46 +1,12 @@
 *** Settings ***
 Library        RequestsLibrary
 Library        Collections
-Library        OperatingSystem
-Library    String
-Resource    ../login/login_keyword_test.robot
+Resource    ../resources/auth_keywords.resource
+Resource    ../../resources/products_keywords.resource
+Resource    ../../resources/categories_keywords.resource
+Resource    ../../resources/common_teardown.resource
 Suite Setup      Init Test IDs
 Suite Teardown   Teardown Product And Category
-
-
-*** Variables ***
-
-${PRODUCTS_ENDPOINT}    /api/products/
-${CATEGORIES_ENDPOINT}    /api/categories/
-
-*** Keywords ***
-Fetch Products
-    [Documentation]    Makes a GET request to the products endpoint
-    ${token}=    Login And Get Token
-    Create Session    prod    ${BASE_URL}
-    ${headers}=    Create Dictionary    Authorization=Bearer ${token}
-    Log    ${headers}
-    ${response}=    GET On Session    prod    ${PRODUCTS_ENDPOINT}    headers=${headers}
-    RETURN    ${response}
-
-Init Test IDs
-    [Documentation]    Nollaa id:t turvallista siivousta varten
-    Set Suite Variable    ${SUITE_PRODUCT_ID}     ${None}
-    Set Suite Variable    ${SUITE_CATEGORY_ID}    ${None}
-
-Delete Product If Exists
-    Run Keyword If    '${SUITE_PRODUCT_ID}' != 'None'
-    ...    DELETE On Session    prod    /api/products/${SUITE_PRODUCT_ID}
-
-Delete Category If Exists
-    Run Keyword If    '${SUITE_CATEGORY_ID}' != 'None'
-    ...    DELETE On Session    prod    /api/categories/${SUITE_CATEGORY_ID}
-
-Teardown Product And Category
-    [Documentation]    Poista ensin tuote, sitten kategoria (FK-riippuvuus)
-    Delete Product If Exists
-    Delete Category If Exists
-
 
 
 *** Test Cases ***
@@ -81,14 +47,13 @@ No Token
     List Should Not Contain Value     ${keys}    name
 
 
-    
-    
-  
-   
-    
-    
-    
-           
-  
 
-    
+POST Chain: Category → Product
+    ${epoch}=          Get Time    epoch
+    ${cat_name}=       Set Variable    cat_name${epoch}
+    ${category_id}=    Create Category And Save Id    ${cat_name}
+
+    ${prod_name}=      Set Variable    Test-Product-${epoch}
+    ${product_id}=     Create Product With CategoryId    ${prod_name}    ${category_id}
+
+    Log    Created: category id=${category_id}, product id=${product_id} 
