@@ -2,21 +2,24 @@
 Library        OperatingSystem
 Library        RequestsLibrary
 Library        Collections
+
 *** Keywords ***
-Init Test IDs
-    [Documentation]    Nollaa id:t turvallista siivousta varten
+Init Test IDs    #2. Suite Setup
+    [Documentation]    Reset IDs safely
     Set Suite Variable    ${SUITE_PRODUCT_ID}     ${None}
     Set Suite Variable    ${SUITE_CATEGORY_ID}    ${None}
+    Log    ${SUITE_PRODUCT_ID}
+    Log    ${SUITE_CATEGORY_ID}   
 
+
+Teardown Product And Category  # Suite Teardown
+    [Documentation]    Delete the product first, then the category (FK-dependence)
+    Delete Product If Exists
+    Delete Category If Exists
 Delete Product If Exists
     Run Keyword If    '${SUITE_PRODUCT_ID}' != 'None'
-    ...    DELETE On Session    prod    /api/products/${SUITE_PRODUCT_ID}/
+    ...    DELETE On Session    api_auth    /api/products/${SUITE_PRODUCT_ID}/
 
 Delete Category If Exists
     Run Keyword If    '${SUITE_CATEGORY_ID}' != 'None'
-    ...    DELETE On Session    prod    /api/categories/${SUITE_CATEGORY_ID}/
-
-Teardown Product And Category
-    [Documentation]    Poista ensin tuote, sitten kategoria (FK-riippuvuus)
-    Delete Product If Exists
-    Delete Category If Exists
+    ...    DELETE On Session    api_auth    /api/categories/${SUITE_CATEGORY_ID}/

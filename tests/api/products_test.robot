@@ -5,7 +5,7 @@ Resource    ../resources/auth_keywords.resource
 Resource    ../../resources/products_keywords.resource
 Resource    ../../resources/categories_keywords.resource
 Resource    ../../resources/common_teardown.resource
-Suite Setup      Init Test IDs
+Suite Setup      Init Test IDs    #1.--> common_teardown.resource
 Suite Teardown   Teardown Product And Category
 
 
@@ -13,47 +13,25 @@ Suite Teardown   Teardown Product And Category
 Get Products Should Return Valid Data
     [Documentation]    Verify products API returns valid product data
     ${response}=    Fetch Products
-    Should Be Equal As Numbers    ${response.status_code}    200
-    ${products}=    Set Variable    ${response.json()}
-    Should Not Be Empty    ${products}
+    Verify Product Structure In Response    ${response}
     
-    # Verify first product structure
-    ${first_product}=    Get From List    ${products}    0
-    
-    Dictionary Should Contain Key    ${first_product}    product_name
-    Should Not Be Empty    ${first_product}[product_name]
-
-    Dictionary Should Contain Key    ${first_product}    product_id
-    Should Not Be String    ${first_product}[product_id] 
-
 No Token 
-    [Documentation]    Try To Get Products without Login and Token
-    Create Session    prod    ${BASE_URL}
-    ${response}=    GET On Session    prod    ${PRODUCTS_ENDPOINT}    expected_status=401
-    
-    # Content-Type on JSON
-    ${ct}=    Get From Dictionary    ${response.headers}    Content-Type
-    Should Start With    ${ct}    application/json
-    ${wa}=    Get From Dictionary    ${response.headers}    WWW-Authenticate    
-    Should Start With    ${wa}    Bearer
+    [Documentation]     Try To Get Products without Login and Token
+    Create Session    api_auth    ${BASE_URL}
+    ${response}=    GET On Session    api_auth    ${PRODUCTS_ENDPOINT}    expected_status=401
+    Verify Unauthorized Response    ${response}
 
-     # Error Body, No Product
-    ${body}=    Set Variable    ${response.json()}
-    Dictionary Should Contain Key    ${body}    detail
+POST Chain: Category → Product 
+    # Creates Temporary IDs
+    ${epoch}=          Get Time    epoch    #3. Robot hakee järjestelmän ajan sekunteina (epoch).  
+
+    ${category_name}=       Set Variable    cat_name${epoch}    #4. ${category_name} = cat_name1755701234  Done
+    ${category_id}=    Create Category And Save Id    ${category_name}    #5. --> categories_keywords.resource."Tilataan" category_id funktiolta.
+                                                                          # Saadaan vastaus: 27 
+
+    ${product_name}=      Set Variable    Test-Product-${epoch}    #13. Muodostuu esim. Test-Product-1755701234. Tallentuu = ${product_name} 
+    ${product_id}=     Create Product With CategoryId    ${product_name}    ${category_id}    #14. --> products_keywords.resource saa argumentit
+
+    Log    Created: category id=${category_id}, product id=${product_id}
 
   
-    ${keys}=    Get Dictionary Keys    ${body}
-    List Should Not Contain Value     ${keys}    id
-    List Should Not Contain Value     ${keys}    name
-
-
-
-POST Chain: Category → Product
-    ${epoch}=          Get Time    epoch
-    ${cat_name}=       Set Variable    cat_name${epoch}
-    ${category_id}=    Create Category And Save Id    ${cat_name}
-
-    ${prod_name}=      Set Variable    Test-Product-${epoch}
-    ${product_id}=     Create Product With CategoryId    ${prod_name}    ${category_id}
-
-    Log    Created: category id=${category_id}, product id=${product_id} 
