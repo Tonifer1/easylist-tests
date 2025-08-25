@@ -1,7 +1,8 @@
 *** Settings ***
 Library        OperatingSystem
 Library        String
-Resource       ../resources/auth_keywords.resource    # Bring Login And Get Token
+Library    Telnet
+Resource       ../resources/auth_keywords.resource
 
 *** Variables ***
 ${PRODUCTS_ENDPOINT}    /api/products/
@@ -14,7 +15,6 @@ Fetch Products
     ${response}=    GET On Session    api_auth    ${PRODUCTS_ENDPOINT}    
     RETURN    ${response}
 
-*** Keywords ***
 Verify Product Structure In Response
     [Arguments]    ${response}
     Should Be Equal As Numbers    ${response.status_code}    200    
@@ -34,27 +34,48 @@ Verify Unauthorized Response
     Should Start With    ${response.headers}[WWW-Authenticate]    Bearer
     ${body}=    Set Variable    ${response.json()}
     Dictionary Should Contain Key    ${body}    detail
-
-
-
+    Should Be Equal As Numbers    ${response.status_code}    401 
 
 Create Product With CategoryId
-    [Arguments]    ${product_name}    ${category_id}    #15. Ottaa vastaan arvot esim. Test-Product-1755701234 ja 27 
+    [Arguments]    ${product_name}    ${category_id}   
     Create Authenticated Session
 
     ${payload}=    Create Dictionary    product_name=${product_name}    category=${category_id}
-    # 16. Rakentaa payloadin: {"product_name": "Test-Product-1755701234",  "category": 27}
+    # Creates payload: {"product_name": "Test-Product-1755701234",  "category": 27}
 
     ${response}=       POST On Session    api_auth    ${PRODUCTS_ENDPOINT}    json=${payload}
     Should Be Equal As Integers    ${response.status_code}    201
     ${body}=       Set Variable    ${response.json()}
-    ${product_id}=        Get From Dictionary    ${body}    product_id    #17. Poimii product_id = esim. 175
-    Set Suite Variable    ${SUITE_PRODUCT_ID}    ${product_id}    #18.Tallentaa myös common_teardown.resourceen.  ${SUITE_PRODUCT_ID} = 175
-    Log    ${SUITE_PRODUCT_ID}        
-    RETURN       ${product_id}    #19. Palauttaa arvon testille ${product_id} = 175
+    ${product_id}=        Get From Dictionary    ${body}    product_id    
+
+    Log    ${product_id}        
+    RETURN       ${product_id}   
+
+
+Teardown Product And Category
+    [Arguments]    ${product_id}    ${category_id}
+    [Documentation]    Deletes product and category if their IDs are available.
+    Delete Product If Exists    ${product_id}
+    Delete Category If Exists    ${category_id}
+
+Delete Product If Exists
+    [Arguments]    ${product_id}
+    Run Keyword If    '${product_id}' != 'None'
+    ...    DELETE On Session    api_auth    /api/products/${product_id}/    expected_status=204
+
+Delete Category If Exists
+    [Arguments]    ${category_id}
+    Run Keyword If    '${category_id}' != 'None'
+    ...    DELETE On Session    api_auth    /api/categories/${category_id}/    expected_status=204
+      
 
 Get Product By Id
     [Arguments]    ${product_id}
     Create Authenticated Session
-    ${response}=    GET On Session    api_auth    /api/products/${product_id}/
-    RETURN     ${response}
+    ${resp}=    GET On Session    api_auth    /api/products/${product_id}/
+    RETURN    ${resp}
+
+
+
+
+
