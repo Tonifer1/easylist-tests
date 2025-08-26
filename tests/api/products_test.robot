@@ -20,32 +20,35 @@ No Token
 
 POST Chain: Category → Product 
     [Documentation]    Creates a temporary product and category and then deletes them.
-    
-    # Creates Temporary Product and Category
+    Set Test Variable    ${product_id}    ${None}
+    Set Test Variable    ${category_id}   ${None}
+    [Teardown]    Teardown Product And Category    ${product_id}    ${category_id}
+
     ${epoch}=    Get Time    epoch
     ${category_name}=    Set Variable    cat_name${epoch}
     ${category_id}=    Create Category And Save Id    ${category_name}
-
     ${product_name}=    Set Variable    Test-Product-${epoch}
     ${product_id}=    Create Product With CategoryId    ${product_name}    ${category_id}
     Log    Created: category id=${category_id}, product id=${product_id}
+
+PATCH Product 
+
+    [Documentation]    Creates a temporary product and category, Updates the Product name and then deletes them.
+    Set Test Variable    ${product_id}    ${None}
+    Set Test Variable    ${category_id}   ${None}   
     [Teardown]    Teardown Product And Category    ${product_id}    ${category_id}
 
-#PATCH Product 
-
-    # ${epoch}=          Get Time    epoch    #3. Robot hakee järjestelmän ajan sekunteina (epoch).  
-
-    # ${category_name}=       Set Variable    cat_name${epoch}    #4. ${category_name} = cat_name1755701234  Done
-    # ${category_id}=    Create Category And Save Id    ${category_name}    #5. --> categories_keywords.resource."Tilataan" category_id funktiolta.                                                                          # Saadaan vastaus: 27
-    # ${product_name}=      Set Variable    Test-Product-${epoch}    #13. Muodostuu esim. Test-Product-1755701234. Tallentuu = ${product_name} 
-    # ${product_id}=     Create Product With Local CategoryId    ${product_name}    ${category_id}    #14. --> products_keywords.resource saa argumentit
-    # ${new_name}=       Set Variable    Test-Product-UPDATED-${epoch}
-    # ${patch_resp}=     Patch Product Name    ${product_id}    ${new_name}
-    # Delete Product By Id    ${product_id}
-    # Delete Category By Id    ${category_id}    
-
-    # Log    Created: category id=${category_id}, product id=${product_id}
-    # Log     ${epoch}  
+    ${category_name}=       Set Variable    dummycat    
+    ${category_id}=    Create Category And Save Id    ${category_name}                                                                                      
+    ${product_name}=      Set Variable    Test-Patch-Product    
+    ${product_id}=     Create Product With CategoryId    ${product_name}    ${category_id}
+    ${new_name}=       Set Variable    Test-Patch-Product-UPDATED
+    ${patch_resp}=     Patch Product Name    ${product_id}    ${new_name}
+   
+    Log    Created: new name=${new_name}
+    
+        
+     
 
 
 

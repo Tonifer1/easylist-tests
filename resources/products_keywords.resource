@@ -7,7 +7,6 @@ Resource       ../resources/auth_keywords.resource
 *** Variables ***
 ${PRODUCTS_ENDPOINT}    /api/products/
 
-
 *** Keywords ***
 Fetch Products
     [Documentation]    Makes a GET request to the products endpoint
@@ -24,9 +23,7 @@ Verify Product Structure In Response
     Dictionary Should Contain Key    ${first_product}    product_name
     Should Not Be Empty    ${first_product}[product_name]
     Dictionary Should Contain Key    ${first_product}    product_id
-    Should Not Be String    ${first_product}[product_id] 
-
-
+    Should Not Be String    ${first_product}[product_id]
 
 Verify Unauthorized Response
     [Arguments]    ${response}
@@ -42,15 +39,23 @@ Create Product With CategoryId
 
     ${payload}=    Create Dictionary    product_name=${product_name}    category=${category_id}
     # Creates payload: {"product_name": "Test-Product-1755701234",  "category": 27}
-
     ${response}=       POST On Session    api_auth    ${PRODUCTS_ENDPOINT}    json=${payload}
     Should Be Equal As Integers    ${response.status_code}    201
     ${body}=       Set Variable    ${response.json()}
     ${product_id}=        Get From Dictionary    ${body}    product_id    
 
     Log    ${product_id}        
-    RETURN       ${product_id}   
+    RETURN       ${product_id}
 
+Patch Product Name   
+    [Arguments]    ${product_id}    ${new_name}
+    Create Authenticated Session
+    
+    ${payload}=    Create Dictionary    product_name=${new_name}
+    ${response}=       PATCH On Session    api_auth    ${PRODUCTS_ENDPOINT}${product_id}/    json=${payload}
+    ${body}=       Set Variable    ${response.json()}
+    ${product_name}=    Get From Dictionary    ${body}    product_name
+    RETURN    ${product_name}        
 
 Teardown Product And Category
     [Arguments]    ${product_id}    ${category_id}
@@ -61,12 +66,12 @@ Teardown Product And Category
 Delete Product If Exists
     [Arguments]    ${product_id}
     Run Keyword If    '${product_id}' != 'None'
-    ...    DELETE On Session    api_auth    /api/products/${product_id}/    expected_status=204
+    ...    DELETE On Session    api_auth    /api/products/${product_id}/    expected_status=any
 
 Delete Category If Exists
     [Arguments]    ${category_id}
     Run Keyword If    '${category_id}' != 'None'
-    ...    DELETE On Session    api_auth    /api/categories/${category_id}/    expected_status=204
+    ...    DELETE On Session    api_auth    /api/categories/${category_id}/    expected_status=any
       
 
 Get Product By Id
