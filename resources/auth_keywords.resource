@@ -17,4 +17,16 @@ Login And Get Token
     Should Be Equal As Numbers    ${response.status_code}    200
     ${json}=    SetVariable     ${response.json()}
     ${ACCESTOKEN}=    Get From Dictionary    ${json}    access
-    RETURN    ${ACCESTOKEN} 
+    RETURN    ${ACCESTOKEN}
+    
+Login With Credentials
+    [Arguments]    ${username}    ${password}
+    Create Session    auth    ${BASE_URL}
+    &{data}=    Create Dictionary    username=${username}    password=${password}
+    POST On Session    auth    ${LOGIN_ENDPOINT}    json=${data}
+
+
+Create Authenticated Session
+    [Documentation]    Creates an authenticated session with a token.
+    ${token}=    Login And Get Token
+    Create Session    api_auth    ${BASE_URL}    headers={"Authorization":"Bearer ${token}","Content-Type":"application/json"}

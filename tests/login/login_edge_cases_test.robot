@@ -1,20 +1,13 @@
 *** Settings ***
 Library        RequestsLibrary
 Library        Collections
-Resource       ../resources/auth_keywords.resource    # tuodaan Login And Get Token
+Resource       ../resources/auth_keywords.resource   
 
 *** Variables ***
 
 ${USERNAME}         %{API_USERNAME}
 ${PASSWORD}         %{API_PASSWORD}
 
-
-*** Keywords ***
-Login With Credentials
-    [Arguments]    ${username}    ${password}
-    Create Session    auth    ${BASE_URL}
-    &{data}=    Create Dictionary    username=${username}    password=${password}
-    POST On Session    auth    ${LOGIN_ENDPOINT}    json=${data}
 
 *** Test Cases ***
 Login Succeeds And Returns Tokens

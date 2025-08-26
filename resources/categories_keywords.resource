@@ -5,21 +5,29 @@ Library         OperatingSystem
 Resource   ./auth_keywords.resource
 
 *** Variables ***
-${BASE_URL}              http://127.0.0.1:8000
+
 ${CATEGORIES_ENDPOINT}    /api/categories/
 
 *** Keywords ***
 
-Ensure Categories Session
-    ${token}=    Login And Get Token
-    Create Session    cat    ${BASE_URL}    headers={"Authorization":"Bearer ${token}","Content-Type":"application/json"}
+
 Create Category And Save Id
-    [Arguments]    ${name}
-    Ensure Categories Session
-    ${payload}=    Create Dictionary    category_name=${name}
-    ${resp}=       POST On Session    cat    ${CATEGORIES_ENDPOINT}    json=${payload}
-    Should Be Equal As Integers    ${resp.status_code}    201
-    ${body}=       Set Variable    ${resp.json()}
-    ${cat_id}=         Get From Dictionary    ${body}    category_id
-    Set Suite Variable    ${SUITE_CATEGORY_ID}    ${cat_id}
-    RETURN       ${cat_id}
+    [Arguments]    ${category_name}    # Here comes created value from products_test.robot {categoryname}: cat_name1755701234
+    Create Authenticated Session
+    ${payload}=    Create Dictionary    category_name=${category_name}    #7.Builds payload: {"category_name": "cat_name1755701234"}.
+    ${response}=       POST On Session    api_auth    ${CATEGORIES_ENDPOINT}    json=${payload}    # Sends POST /api/categories/
+    Should Be Equal As Integers    ${response.status_code}    201    #Response:{"category_id": 27, "category_name": "cat_name1755701234"} 
+    ${body}=       Set Variable    ${response.json()}
+    ${category_id}=         Get From Dictionary    ${body}    category_id    #10. Pick created category_id = 27.
+   
+    RETURN       ${category_id}    #Return value example ${category_id}=27  to --> products_test.robot
+
+
+
+Delete Category By Id
+    [Arguments]    ${category_id}
+    Create Authenticated Session
+    ${resp}=    DELETE On Session    api_auth    /api/categories/${category_id}/
+    RETURN    ${resp}
+
+

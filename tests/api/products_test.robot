@@ -4,56 +4,56 @@ Library        Collections
 Resource    ../resources/auth_keywords.resource
 Resource    ../../resources/products_keywords.resource
 Resource    ../../resources/categories_keywords.resource
-Resource    ../../resources/common_teardown.resource
-Suite Setup      Init Test IDs
-Suite Teardown   Teardown Product And Category
-
+  
 
 *** Test Cases ***
 Get Products Should Return Valid Data
     [Documentation]    Verify products API returns valid product data
     ${response}=    Fetch Products
-    Should Be Equal As Numbers    ${response.status_code}    200
-    ${products}=    Set Variable    ${response.json()}
-    Should Not Be Empty    ${products}
+    Verify Product Structure In Response    ${response}
     
-    # Verify first product structure
-    ${first_product}=    Get From List    ${products}    0
-    
-    Dictionary Should Contain Key    ${first_product}    product_name
-    Should Not Be Empty    ${first_product}[product_name]
-
-    Dictionary Should Contain Key    ${first_product}    product_id
-    Should Not Be String    ${first_product}[product_id] 
-
 No Token 
-    [Documentation]    Try To Get Products without Login and Token
-    Create Session    prod    ${BASE_URL}
-    ${response}=    GET On Session    prod    ${PRODUCTS_ENDPOINT}    expected_status=401
-    
-    # Content-Type on JSON
-    ${ct}=    Get From Dictionary    ${response.headers}    Content-Type
-    Should Start With    ${ct}    application/json
-    ${wa}=    Get From Dictionary    ${response.headers}    WWW-Authenticate    
-    Should Start With    ${wa}    Bearer
+    [Documentation]     Try To Get Products without Login and Token
+    Create Session    api_auth    ${BASE_URL}
+    ${response}=    GET On Session    api_auth    ${PRODUCTS_ENDPOINT}    expected_status=401
+    Verify Unauthorized Response    ${response}
 
-     # Error Body, No Product
-    ${body}=    Set Variable    ${response.json()}
-    Dictionary Should Contain Key    ${body}    detail
+POST Chain: Category → Product 
+    [Documentation]    Creates a temporary product and category and then deletes them.
+    Set Test Variable    ${product_id}    ${None}
+    Set Test Variable    ${category_id}   ${None}
+    [Teardown]    Teardown Product And Category    ${product_id}    ${category_id}
+
+    ${epoch}=    Get Time    epoch
+    ${category_name}=    Set Variable    cat_name${epoch}
+    ${category_id}=    Create Category And Save Id    ${category_name}
+    ${product_name}=    Set Variable    Test-Product-${epoch}
+    ${product_id}=    Create Product With CategoryId    ${product_name}    ${category_id}
+    Log    Created: category id=${category_id}, product id=${product_id}
+
+PATCH Product 
+
+    [Documentation]    Creates a temporary product and category, Updates the Product name and then deletes them.
+    Set Test Variable    ${product_id}    ${None}
+    Set Test Variable    ${category_id}   ${None}   
+    [Teardown]    Teardown Product And Category    ${product_id}    ${category_id}
+
+    ${category_name}=       Set Variable    dummycat    
+    ${category_id}=    Create Category And Save Id    ${category_name}                                                                                      
+    ${product_name}=      Set Variable    Test-Patch-Product    
+    ${product_id}=     Create Product With CategoryId    ${product_name}    ${category_id}
+    ${new_name}=       Set Variable    Test-Patch-Product-UPDATED
+    ${patch_resp}=     Patch Product Name    ${product_id}    ${new_name}
+   
+    Log    Created: new name=${new_name}
+    
+        
+     
+
+
+
+   
+
+
 
   
-    ${keys}=    Get Dictionary Keys    ${body}
-    List Should Not Contain Value     ${keys}    id
-    List Should Not Contain Value     ${keys}    name
-
-
-
-POST Chain: Category → Product
-    ${epoch}=          Get Time    epoch
-    ${cat_name}=       Set Variable    cat_name${epoch}
-    ${category_id}=    Create Category And Save Id    ${cat_name}
-
-    ${prod_name}=      Set Variable    Test-Product-${epoch}
-    ${product_id}=     Create Product With CategoryId    ${prod_name}    ${category_id}
-
-    Log    Created: category id=${category_id}, product id=${product_id} 
