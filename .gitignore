@@ -21,4 +21,6 @@ __pycache__/
 *log.html
 *report.html
 
+*geckodriver.log
+
 
