@@ -2,7 +2,7 @@
 Library          RequestsLibrary
 Library          Collections
 Library         OperatingSystem
-Resource   ./auth_keywords.resource
+Resource   ../resources/api/auth_keywords.resource
 
 *** Variables ***
 

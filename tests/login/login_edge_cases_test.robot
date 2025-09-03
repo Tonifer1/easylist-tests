@@ -1,7 +1,7 @@
 *** Settings ***
 Library        RequestsLibrary
 Library        Collections
-Resource       ../resources/auth_keywords.resource   
+Resource       ../resources/api/auth_keywords.resource   
 
 *** Variables ***
 

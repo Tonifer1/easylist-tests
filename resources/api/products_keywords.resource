@@ -2,7 +2,7 @@
 Library        OperatingSystem
 Library        String
 Library    Telnet
-Resource       ../resources/auth_keywords.resource
+Resource       ../resources/api/auth_keywords.resource
 
 *** Variables ***
 ${PRODUCTS_ENDPOINT}    /api/products/
@@ -79,6 +79,7 @@ Get Product By Id
     Create Authenticated Session
     ${resp}=    GET On Session    api_auth    /api/products/${product_id}/
     RETURN    ${resp}
+    #
 
 
 
