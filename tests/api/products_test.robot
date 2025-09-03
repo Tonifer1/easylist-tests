@@ -1,9 +1,9 @@
 *** Settings ***
 Library        RequestsLibrary
 Library        Collections
-Resource    ../resources/auth_keywords.resource
-Resource    ../../resources/products_keywords.resource
-Resource    ../../resources/categories_keywords.resource
+Resource    ../resources/api/auth_keywords.resource
+Resource    ../../resources/api/products_keywords.resource
+Resource    ../../resources/api/categories_keywords.resource
   
 
 *** Test Cases ***

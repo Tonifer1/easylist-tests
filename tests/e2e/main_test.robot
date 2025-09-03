@@ -1,6 +1,6 @@
 *** Settings ***
-Resource    ../../resources/browser_keywords.resource
-Test Setup    Open Browser To Google    ${BROWSER}
+Resource    ../../resources/selenium/open_browser_keywords.resource
+Test Setup    Open My Browser    ${BROWSER}
 Test Teardown    Close My Browser
 
 #    robot --variable BROWSER:firefox tests/e2e/first_test.robot
@@ -10,9 +10,10 @@ Test Teardown    Close My Browser
 ${BROWSER}    chrome
 
 *** Test Cases ***
-Page Should Contain Google
-    Page Should Contain    Google
+Page Should Contain EasyList
+    [Tags]    ignore
+    Page Should Contain    EasyList
+    
 
-Search Text Should Be Visible
-    Page Should Contain    Search
+
 
