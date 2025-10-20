@@ -63,8 +63,21 @@ Teardown Product And Category
     Delete Product If Exists    ${product_id}
     Delete Category If Exists    ${category_id}
 
+Teardown Multiple Products And Category
+    [Arguments]    ${category_id}    @{product_ids}    
+    FOR    ${product_id}    IN    @{product_ids}
+        Run Keyword If    '${product_id}' != 'None'
+        ...    Run Keywords
+        ...    Log    Deleting product: ${product_id}
+        ...    AND
+        ...    DELETE On Session    api_auth    /api/products/${product_id}/    expected_status=any
+    END
+    Delete Category If Exists    ${category_id}
+
+
 Delete Product If Exists
     [Arguments]    ${product_id}
+    Log    Checking product_id: ${product_id}
     Run Keyword If    '${product_id}' != 'None'
     ...    DELETE On Session    api_auth    /api/products/${product_id}/    expected_status=any
 
@@ -80,6 +93,19 @@ Get Product By Id
     ${resp}=    GET On Session    api_auth    /api/products/${product_id}/
     RETURN    ${resp}
     #
+Get Products By Category
+    [Arguments]    ${category_id}
+    Create Authenticated Session
+    ${response}=    GET On Session    api_auth    url=/api/products/    params=category=${category_id}
+    Run Keyword And Continue On Failure    Should Be Equal As Integers    ${response.status_code}    200
+    Should Be Equal As Integers    ${response.status_code}    200      
+    ${json}=    Set Variable    ${response.json()}
+    Should Not Be Empty    ${json}
+    ${first_product}=    Get From List    ${json}    0
+    Dictionary Should Contain Key    ${first_product}    product_name
+    Should Be Equal As Integers    ${first_product['category']}    ${category_id}
+    Log To Console    ${category_id}
+    Log To Console    Response status: ${response.status_code}
 
 
 

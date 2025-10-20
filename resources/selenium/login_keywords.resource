@@ -7,6 +7,8 @@ ${BROWSER}    chrome
 
 
 *** Keywords ***
+
+
 Click Login Link
     Click Element    id=login-link
 
@@ -24,12 +26,13 @@ Submit Login
     Click Button    id=login-button
 
 Login Should Succeed
-    Wait Until Page Contains    Products    7s
-    Page Should Contain    Products
+    Wait Until Page Contains    Tuotteet    7s
+    Page Should Contain    Tuotteet
 
 Logout Should Succeed
-    Wait Until Page Contains Element    id=login-link
-    Page Should Contain Element    id=login-link
+    ${status}    ${msg}=    Run Keyword And Ignore Error    Wait Until Page Contains Element    id=login-link    10s
+    Run Keyword If    '${status}'=='FAIL'    Debug Snapshot
+    Should Be Equal    ${status}    PASS
 
 
 Login Should Fail
@@ -43,4 +46,9 @@ Login Should Fail With Empty Credentials
 
 
 
-    
+Debug Snapshot
+    ${url}=    Get Location
+    Log    URL: ${url}
+    Capture Page Screenshot
+    Log     Page Source
+  

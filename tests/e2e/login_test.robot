@@ -4,6 +4,7 @@ Resource    ../../resources/selenium/login_keywords.resource
 Test Setup    Open My Browser    ${BROWSER}
 Test Teardown    Close My Browser
 
+
 *** Variables ***
 ${BROWSER}    chrome
 ${VALID_USERNAME}    %{API_USERNAME}
@@ -22,6 +23,7 @@ Login With Valid Credentials Should Succeed
     Login Should Succeed
     Click Logout Link
     Logout Should Succeed
+
 
 
 Login With Invalid Username Should Fail
