@@ -1,17 +1,16 @@
 *** Settings ***
+Documentation    Basic E2E sanity test that verifies the EasyList page opens successfully.
 Resource    ../../resources/selenium/open_browser_keywords.resource
 Test Setup    Open My Browser    ${BROWSER}
 Test Teardown    Close My Browser
 
-#    robot --variable BROWSER:firefox tests/e2e/first_test.robot
-#    robot --variable BROWSER:chrome tests/e2e/first_test.robot
 
 *** Variables ***
-${BROWSER}    chrome
+
 
 *** Test Cases ***
 Page Should Contain EasyList
-    [Tags]    ignore
+    [Tags]    e2e    selenium    smoke    
     Page Should Contain    EasyList
     
 

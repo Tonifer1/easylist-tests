@@ -3,6 +3,8 @@ Library    SeleniumLibrary
 
 *** Variables ***
 ${BROWSER}    chrome
+#robot --variable BROWSER:chrome tests/e2e/main_test.robot
+
 
 *** Keywords ***
 Open My Browser

@@ -6,7 +6,6 @@ Test Teardown    Close My Browser
 
 
 *** Variables ***
-${BROWSER}    chrome
 ${VALID_USERNAME}    %{API_USERNAME}
 ${VALID_PASSWORD}    %{API_PASSWORD}
 ${INVALID_USERNAME}    wronguser
@@ -15,6 +14,7 @@ ${SPECIAL_CHARS}    ¤#%&/()
 
 *** Test Cases ***
 Login With Valid Credentials Should Succeed
+    [Tags]    e2e    selenium    login
     Click Login Link
     Wait Until Element Is Visible    id=username    7s
     Input Username And Password    ${VALID_USERNAME}    ${VALID_PASSWORD}
@@ -27,6 +27,7 @@ Login With Valid Credentials Should Succeed
 
 
 Login With Invalid Username Should Fail
+    [Tags]    e2e    selenium    login    error
     Click Login Link
     Wait Until Element Is Visible    id=username    7s
     Input Username And Password    ${INVALID_USERNAME}    ${VALID_PASSWORD}
@@ -34,6 +35,7 @@ Login With Invalid Username Should Fail
     Login Should Fail
 
 Login With Invalid Password Should Fail
+    [Tags]    e2e    selenium    login    error
     Click Login Link
     Wait Until Element Is Visible    id=username    7s
     Input Username And Password    ${VALID_USERNAME}    ${INVALID_PASSWORD}
@@ -41,6 +43,7 @@ Login With Invalid Password Should Fail
     Login Should Fail
 
  Login With Special Characters Should Fail
+    [Tags]    e2e    selenium    login    error
     Click Login Link
     Wait Until Element Is Visible    id=username    7s
     Input Username And Password    ${SPECIAL_CHARS}    ${SPECIAL_CHARS}
@@ -48,6 +51,7 @@ Login With Invalid Password Should Fail
     Login Should Fail
 
  Login With Empty Credentials
+    [Tags]    e2e    selenium    login    error
     Click Login Link
     Wait Until Element Is Visible    id=username    7s
     Input Username And Password    ${EMPTY}    ${EMPTY}

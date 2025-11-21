@@ -1,25 +1,30 @@
 *** Settings ***
+Documentation    API tests for product management in EasyList.
+...              Verify product creation, retrieval, deletion and multi-product category handling.
 Library        RequestsLibrary
 Library        Collections
 Resource    ../resources/api/auth_keywords.resource
-Resource    ../../resources/api/products_keywords.resource
-Resource    ../../resources/api/categories_keywords.resource
+Resource    ../resources/api/products_keywords.resource
+Resource    ../resources/api/categories_keywords.resource
   
 
 *** Test Cases ***
 Get Products Should Return Valid Data
     [Documentation]    Verify products API returns valid product data
+    [Tags]    api    products    read    smoke
     ${response}=    Fetch Products
     Verify Product Structure In Response    ${response}
     
 No Token 
     [Documentation]     Try To Get Products without Login and Token
+    [Tags]    api    auth    security    error
     Create Session    api_auth    ${BASE_URL}
     ${response}=    GET On Session    api_auth    ${PRODUCTS_ENDPOINT}    expected_status=401
     Verify Unauthorized Response    ${response}
 
-POST Chain: Category → Product 
-    [Documentation]    Creates a temporary product and category and then deletes them.
+Create Category and Product
+    [Documentation]    Creates a temporary category and product and then deletes them.
+    [Tags]    api    products    create    smoke
     Set Test Variable    ${product_id}    ${None}
     Set Test Variable    ${category_id}   ${None}
     [Teardown]    Teardown Product And Category    ${product_id}    ${category_id}
@@ -32,8 +37,8 @@ POST Chain: Category → Product
     Log    Created: category id=${category_id}, product id=${product_id}
 
 PATCH Product 
-
-    [Documentation]    Creates a temporary product and category, Updates the Product name and then deletes them.
+    [Documentation]    Creates a temporary category and product, Updates the Product name and then deletes them.
+    [Tags]    api    products    patch    smoke 
     Set Test Variable    ${product_id}    ${None}
     Set Test Variable    ${category_id}   ${None}   
     [Teardown]    Teardown Product And Category    ${product_id}    ${category_id}
@@ -48,7 +53,8 @@ PATCH Product
     Log    Created: new name=${new_name}
     
 Create And Verify Multiple Products In Category
-    [Documentation]    Creates a temporary products and category.Get products by category ID.
+    [Documentation]    Creates a temporary products and category. Get products by category ID.
+    [Tags]    api    products    multi    cleanup    regression
     Set Test Variable    ${category_id}   ${None}
     Set Test Variable    @{product_ids}   @{EMPTY}
 
