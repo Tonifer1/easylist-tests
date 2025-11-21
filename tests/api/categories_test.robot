@@ -1,5 +1,5 @@
 *** Settings ***
-Documentation    API tests for category management in EasyList.
+Documentation    API tests for category management in EasyList
 Library        RequestsLibrary
 Library        Collections
 Resource    ../resources/api/auth_keywords.resource
