@@ -1,9 +1,8 @@
 *** Settings ***
-Resource    ../../resources/selenium/open_browser_keywords.resource
-Resource    ../../resources/selenium/login_keywords.resource
+Resource    ../../resources/e2e/open_browser_keywords.resource
+Resource    ../../resources/e2e/login_keywords.resource
 Test Setup    Open My Browser    ${BROWSER}
 Test Teardown    Close My Browser
-
 
 *** Variables ***
 ${VALID_USERNAME}    %{API_USERNAME}
@@ -23,8 +22,6 @@ Login With Valid Credentials Should Succeed
     Login Should Succeed
     Click Logout Link
     Logout Should Succeed
-
-
 
 Login With Invalid Username Should Fail
     [Tags]    e2e    selenium    login    error

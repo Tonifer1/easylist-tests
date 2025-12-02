@@ -12,7 +12,3 @@ Test Teardown    Close My Browser
 Page Should Contain EasyList
     [Tags]    e2e    selenium    smoke    
     Page Should Contain    EasyList
-    
-
-
-
