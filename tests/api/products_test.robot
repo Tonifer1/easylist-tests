@@ -24,7 +24,7 @@ Get Products Should Return Valid Data
 
 Fetch Products By Name
     [Documentation]    Verify products by name
-    [Tags]    api    products    read    smoke    quick
+    [Tags]    api    products    read    smoke    
     ${category_id}=    Create Category And Save Id    Name_Category
     ${product_id}=    Create Product With CategoryId    By_Name_Product    ${category_id}
     [Teardown]    Teardown Product And Category    ${product_id}    ${category_id}
@@ -33,7 +33,7 @@ Fetch Products By Name
 
 Fetch Products By Id
     [Documentation]    Verify products by id
-    [Tags]    api    products    read    smoke    quick    id
+    [Tags]    api    products    read    smoke    id
     ${category_id}=    Create Category And Save Id    Id_Category
     ${product_id}=    Create Product With CategoryId    By_Id_Product    ${category_id}
     [Teardown]    Teardown Product And Category    ${product_id}    ${category_id}
@@ -80,7 +80,7 @@ PATCH Product
 
 No Token 
     [Documentation]     Try To Get Products without Login and Token
-    [Tags]    api    auth    security    error
+    [Tags]    api    auth    security    error    no_token
     Create Session    api_auth_no_token    ${BASE_URL}
     ${response}=    GET On Session    api_auth_no_token    ${PRODUCTS_ENDPOINT}    expected_status=401
     Verify Unauthorized Response    ${response}
