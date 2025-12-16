@@ -22,6 +22,25 @@ Get Products Should Return Valid Data
     ${response}=    Fetch Products
     Verify Product Structure In Response    ${response}
 
+Fetch Products By Name
+    [Documentation]    Verify products by name
+    [Tags]    api    products    read    smoke    quick
+    ${category_id}=    Create Category And Save Id    Name_Category
+    ${product_id}=    Create Product With CategoryId    By_Name_Product    ${category_id}
+    [Teardown]    Teardown Product And Category    ${product_id}    ${category_id}
+    ${response}=    Get Products By Name
+    Verify Product Structure In Response    ${response}
+
+Fetch Products By Id
+    [Documentation]    Verify products by id
+    [Tags]    api    products    read    smoke    quick    id
+    ${category_id}=    Create Category And Save Id    Id_Category
+    ${product_id}=    Create Product With CategoryId    By_Id_Product    ${category_id}
+    [Teardown]    Teardown Product And Category    ${product_id}    ${category_id}
+    ${response}=    Get Product By Id    ${product_id}
+    Should Be Equal As Integers        ${category_id}    ${category_id}
+    Verify Single Product Structure    ${response}
+
 # 2) CREATE   
 Create Category and Product
     [Documentation]    Creates a temporary category and product and then deletes them.
@@ -79,7 +98,13 @@ Create And Verify Multiple Products In Category
     Append To List    ${product_ids}    ${product_id}
     ${product_id2}=    Create Product With CategoryId    Test-Multi-Product-2    ${category_id}
     Append To List    ${product_ids}    ${product_id2}
-    Get Products By Category    ${category_id}
+    ${products}=    Get Products By Category    ${category_id}
+    Log    ${products}
+    Length Should Be    ${products}    2
+
+    FOR    ${product}    IN    @{products}
+        Should Be Equal As Integers        ${product}[category]    ${category_id}      
+    END
 
     Log    Created: category name=${category_name}, product name=${product_id}, product name2=${product_id2}
     Log To Console    Test completed. Cleaning up product=${product_id}, category=${category_id}

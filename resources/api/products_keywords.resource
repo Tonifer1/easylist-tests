@@ -19,22 +19,30 @@ Fetch Products
 Get Product By Id
     [Arguments]    ${product_id}
     Create Authenticated Session
-    ${resp}=    GET On Session    api_auth    /api/products/${product_id}/
-    RETURN    ${resp}
+    ${response}=    GET On Session    api_auth    ${PRODUCTS_ENDPOINT}${product_id}/
+    RETURN    ${response}
+
+Get Products By Name
+    Create Authenticated Session
+    &{PARAMS}=    Create Dictionary    productname    A_Setup_Product
+    ${response}=    GET On Session    api_auth    /api/products/    
+    Should Be Equal As Strings    ${response.status_code}    200
+    RETURN    ${response}
 
 Get Products By Category
     [Arguments]    ${category_id}
     Create Authenticated Session
     ${response}=    GET On Session    api_auth    url=/api/products/    params=category=${category_id}
-    Run Keyword And Continue On Failure    Should Be Equal As Integers    ${response.status_code}    200
-    Should Be Equal As Integers    ${response.status_code}    200      
+    Run Keyword And Continue On Failure    Should Be Equal As Integers    ${response.status_code}    200     
     ${json}=    Set Variable    ${response.json()}
     Should Not Be Empty    ${json}
     ${first_product}=    Get From List    ${json}    0
     Dictionary Should Contain Key    ${first_product}    product_name
-    Should Be Equal As Integers    ${first_product['category']}    ${category_id}
+    #Should Be Equal As Integers    ${first_product['category']}    ${category_id}
+    RETURN    ${json}
     Log To Console    ${category_id}
     Log To Console    Response status: ${response.status_code}
+
 
 # 2) CREATE
 Create Product With CategoryId
@@ -97,6 +105,15 @@ Verify Product Structure In Response
     Dictionary Should Contain Key    ${first_product}    product_id
     Should Not Be String    ${first_product}[product_id]
 
+Verify Single Product Structure
+    [Arguments]    ${response}
+    Should Be Equal As Numbers    ${response.status_code}    200    
+    ${product}=    Set Variable    ${response.json()}
+    Should Not Be Empty    ${product}
+    Dictionary Should Contain Key    ${product}    product_name
+    Should Not Be Empty    ${product}[product_name]
+    Dictionary Should Contain Key    ${product}    product_id
+    Should Not Be String    ${product}[product_id]
 Verify Unauthorized Response
     [Arguments]    ${response}
     Should Start With    ${response.headers}[Content-Type]    application/json

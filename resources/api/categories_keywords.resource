@@ -25,7 +25,7 @@ Create Category And Save Id
     ${response}=       POST On Session    api_auth    ${CATEGORIES_ENDPOINT}    json=${payload}    # Sends POST /api/categories/
     Should Be Equal As Integers    ${response.status_code}    201    #Response:{"category_id": 27, "category_name": "cat_name1755701234"} 
     ${body}=       Set Variable    ${response.json()}
-    ${category_id}=         Get From Dictionary    ${body}    category_id    #10. Pick created category_id = 27.
+    ${category_id}=         Get From Dictionary    ${body}    category_id    # Pick created category_id = for example 27
    
     RETURN       ${category_id}    #Return value example ${category_id}=27  to --> products_test.robot
 
