@@ -67,7 +67,7 @@ Delete Category Twice Should Return 404
 
 Delete Category Without Token Should Return 401
     [Documentation]    Try to delete Category without Login and Token
-    [Tags]    api    categories    error    notoken    smoke
+    [Tags]    api    categories    error    no_token    smoke
     Set Test Variable    ${category_id}    ${None}
     VAR    ${category_name}      cat_test_delete_no_token2
     ${category_id}=    Create Category And Save Id    ${category_name}

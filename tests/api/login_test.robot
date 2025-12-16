@@ -57,6 +57,16 @@ Unauthorized Request Without Headers
     ${response}=    GET On Session    api_auth_no_headers    ${CATEGORIES_ENDPOINT}    expected_status=401
     Log    Created: category id=${category_id}, category name=${category_name}
 
+Unauthorized request with refresh token in Authorization header returns 401
+    [Documentation]    Verifies that protected endpoint returns 401 with refresh token in Authorization 
+    [Tags]    api    auth    security    unauthorized    wrong_refresh
+    [Teardown]    Delete Category If Exists    ${category_id}
+    Set Test Variable    ${category_id}    ${None}
+    VAR    ${category_name}    cat_test_wrong_token
+    ${category_id}=    Create Category And Save Id    ${category_name}
+    ${_}    ${refresh_token}=    Login And Get Tokens
+    Create Session    api_auth_wrong_token    ${BASE_URL}    headers={"Authorization":"Bearer ${refresh_token}","Content-Type":"application/json"}
+    ${response}=    GET On Session    api_auth_wrong_token    ${CATEGORIES_ENDPOINT}    expected_status=401
 
 
 Login With Wrong Credentials
