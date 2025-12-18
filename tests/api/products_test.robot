@@ -108,3 +108,18 @@ Create And Verify Multiple Products In Category
 
     Log    Created: category name=${category_name}, product name=${product_id}, product name2=${product_id2}
     Log To Console    Test completed. Cleaning up product=${product_id}, category=${category_id}
+
+Get Products By Category Should Return Only Matching Products
+    [Documentation]    Verifies that products are correctly filtered by category and that products from other categories are excluded.
+    [Tags]    api    products    filtering    regression    
+    ${category_name}=    Set Variable   a_category
+    ${category_id_a}    Create Category And Save Id    ${category_name}
+    ${category_name}=    Set Variable   b_category
+    ${category_id_b}    Create Category And Save Id    ${category_name}
+
+    ${product_id_a}=    Create Product With CategoryId    product_a    ${category_id_a}
+    ${product_id_b}=    Create Product With CategoryId    product_b    ${category_id_b}
+    ${response}=    Get Products By Category    ${category_id_a}
+    [Teardown]    Teardown Multiple Products And Multiple Categories    ${product_id_a}    ${product_id_b}    ${category_id_a}    ${category_id_b}
+
+    Verify Products Are Filtered By Category    ${response}    ${category_id_a}

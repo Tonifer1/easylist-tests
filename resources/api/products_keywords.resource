@@ -38,10 +38,9 @@ Get Products By Category
     Should Not Be Empty    ${json}
     ${first_product}=    Get From List    ${json}    0
     Dictionary Should Contain Key    ${first_product}    product_name
-    #Should Be Equal As Integers    ${first_product['category']}    ${category_id}
     RETURN    ${json}
-    Log To Console    ${category_id}
-    Log To Console    Response status: ${response.status_code}
+
+
 
 
 # 2) CREATE
@@ -94,6 +93,14 @@ Teardown Multiple Products And Category
     END
     Delete Category If Exists    ${category_id}
 
+Teardown Multiple Products And Multiple Categories
+    [Arguments]    ${product_id_a}    ${product_id_b}    ${category_id_a}    ${category_id_b}
+    [Documentation]    Deletes products and categories if their IDs are available.
+    Delete Product If Exists    ${product_id_a}
+    Delete Product If Exists    ${product_id_b}
+    Delete Category If Exists    ${category_id_a}
+    Delete Category If Exists    ${category_id_b}
+
 Verify Product Structure In Response
     [Arguments]    ${response}
     Should Be Equal As Numbers    ${response.status_code}    200    
@@ -120,4 +127,11 @@ Verify Unauthorized Response
     Should Start With    ${response.headers}[WWW-Authenticate]    Bearer
     ${body}=    Set Variable    ${response.json()}
     Dictionary Should Contain Key    ${body}    detail
-    Should Be Equal As Numbers    ${response.status_code}    401 
+    Should Be Equal As Numbers    ${response.status_code}    401
+
+Verify Products Are Filtered By Category
+    [Arguments]    ${response}    ${expected_category_id}   
+    Should Not Be Empty    ${response}
+    FOR    ${product}    IN    @{response}
+    Should Be Equal As Integers        ${product}[category]    ${expected_category_id}
+    END 
