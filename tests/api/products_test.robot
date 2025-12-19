@@ -12,7 +12,22 @@ Resource    ../resources/api/categories_keywords.resource
 
 # === TARGET STRUCTURE FOR PRODUCTS TESTS ===
 
-# 1) READ
+# 1) CREATE   
+Create Category and Product
+    [Documentation]    Creates a temporary category and product and then deletes them.
+    [Tags]    api    products    create    smoke
+    Set Test Variable    ${product_id}    ${None}
+    Set Test Variable    ${category_id}   ${None}
+    [Teardown]    Teardown Product And Category    ${product_id}    ${category_id}
+
+    ${epoch}=    Get Time    epoch
+    ${category_name}=    Set Variable    cat_name${epoch}
+    ${category_id}=    Create Category And Save Id    ${category_name}
+    ${product_name}=    Set Variable    Test-Product-${epoch}
+    ${product_id}=    Create Product With CategoryId    ${product_name}    ${category_id}
+    Log    Created: category id=${category_id}, product id=${product_id}
+
+# 2) READ
 Get Products Should Return Valid Data
     [Documentation]    Verify products API returns valid product data
     [Tags]    api    products    read    smoke
@@ -41,20 +56,7 @@ Fetch Products By Id
     Should Be Equal As Integers        ${category_id}    ${category_id}
     Verify Single Product Structure    ${response}
 
-# 2) CREATE   
-Create Category and Product
-    [Documentation]    Creates a temporary category and product and then deletes them.
-    [Tags]    api    products    create    smoke
-    Set Test Variable    ${product_id}    ${None}
-    Set Test Variable    ${category_id}   ${None}
-    [Teardown]    Teardown Product And Category    ${product_id}    ${category_id}
 
-    ${epoch}=    Get Time    epoch
-    ${category_name}=    Set Variable    cat_name${epoch}
-    ${category_id}=    Create Category And Save Id    ${category_name}
-    ${product_name}=    Set Variable    Test-Product-${epoch}
-    ${product_id}=    Create Product With CategoryId    ${product_name}    ${category_id}
-    Log    Created: category id=${category_id}, product id=${product_id}
 
 # 3) UPDATE
 PATCH Product 
@@ -74,6 +76,21 @@ PATCH Product
     Log    Created: new name=${new_name}
 
 # 4) DELETE
+DELETE Product
+    [Documentation]    Creates a temporary category and product, and deletes them.  
+    [Tags]    api    products    delete    smoke    juu
+    Set Test Variable    ${product_id}    ${None}
+    Set Test Variable    ${category_id}   ${None}   
+    [Teardown]    Teardown Product And Category    ${product_id}    ${category_id}
+
+    ${category_name}=       Set Variable    dummycat    
+    ${category_id}=    Create Category And Save Id    ${category_name}                                                                                      
+    ${product_name}=      Set Variable    Test-Delete-Product    
+    ${product_id}=     Create Product With CategoryId    ${product_name}    ${category_id}
+    Delete Product If Exists    ${product_id}
+
+
+
 
 
 # 5) EXTRA TESTS (AFTER CRUD)
