@@ -78,7 +78,7 @@ PATCH Product
 # 4) DELETE
 DELETE Product
     [Documentation]    Creates a temporary category and product, and deletes them.  
-    [Tags]    api    products    delete    smoke    juu
+    [Tags]    api    products    delete    smoke    
     Set Test Variable    ${product_id}    ${None}
     Set Test Variable    ${category_id}   ${None}   
     [Teardown]    Teardown Product And Category    ${product_id}    ${category_id}
@@ -88,6 +88,20 @@ DELETE Product
     ${product_name}=      Set Variable    Test-Delete-Product    
     ${product_id}=     Create Product With CategoryId    ${product_name}    ${category_id}
     Delete Product If Exists    ${product_id}
+
+DELETE Product Twice Should Return 404
+    [Documentation]    Verify that deleting the same product twice returns a proper 404 Not Found response.  
+    [Tags]    api    products    delete    smoke    twices
+    Set Test Variable    ${product_id}    ${None}
+    Set Test Variable    ${category_id}   ${None}   
+    [Teardown]    Teardown Product And Category    ${product_id}    ${category_id}
+    ${category_name}=       Set Variable    dummycat    
+    ${category_id}=    Create Category And Save Id    ${category_name}                                                                                      
+    ${product_name}=      Set Variable    Test-Delete-Twice-Product    
+    ${product_id}=     Create Product With CategoryId    ${product_name}    ${category_id}
+    Delete Product If Exists    ${product_id}
+    Delete Product And Expect 404    ${product_id} 
+    
 
 
 

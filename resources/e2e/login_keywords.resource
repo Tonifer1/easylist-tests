@@ -50,5 +50,4 @@ Debug Snapshot
     ${url}=    Get Location
     Log    URL: ${url}
     Capture Page Screenshot
-    Log     Page Source
-  
+    Log     Page Source  

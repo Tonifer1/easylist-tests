@@ -13,14 +13,14 @@ ${REFRESH_ENDPOINT}    /api/token/refresh/
 Login With Credentials
     [Arguments]    ${username}    ${password}
     Create Session    auth    ${BASE_URL}
-    &{data}=    Create Dictionary    username=${username}    password=${password}
-    POST On Session    auth    ${LOGIN_ENDPOINT}    json=${data}
+    &{payload}=    Create Dictionary    username=${username}    password=${password}
+    POST On Session    auth    ${LOGIN_ENDPOINT}    json=${payload}
 
 Login And Get Tokens
     [Documentation]    Logs into the API and returns both access and refresh tokens.
     Create Session    auth    ${BASE_URL}
-    ${body}=    Create Dictionary    username=${USERNAME}    password=${PASSWORD}
-    ${response}=    POST On Session    auth    ${LOGIN_ENDPOINT}    json=${body}
+    ${payload}=    Create Dictionary    username=${USERNAME}    password=${PASSWORD}
+    ${response}=    POST On Session    auth    ${LOGIN_ENDPOINT}    json=${payload}
     Should Be Equal As Numbers    ${response.status_code}    200
     ${json}=    SetVariable     ${response.json()}
     ${access_token}=    Get From Dictionary    ${json}    access
@@ -32,8 +32,8 @@ Login And Get Refresh Token
     [Documentation]    Logs into the API and returns an refresh token
     [Arguments]    ${acces_token}    ${refresh_token}    
     Create Session    auth_refresh    ${BASE_URL}
-    ${body}=    Create Dictionary    refresh=${refresh_token}    
-    ${response}=    POST On Session    auth_refresh    ${REFRESH_ENDPOINT}    json=${body}
+    ${payload}=    Create Dictionary    refresh=${refresh_token}    
+    ${response}=    POST On Session    auth_refresh    ${REFRESH_ENDPOINT}    json=${payload}
     Should Be Equal As Numbers    ${response.status_code}    200
     Log    ${refresh_token}
     ${json}=    SetVariable     ${response.json()}
@@ -45,14 +45,13 @@ Login Without Body
     POST On Session    auth_no_body    ${LOGIN_ENDPOINT}
 
 Login With Wrong Content-Type
-    [Arguments]    ${username}    ${password}
-    &{body}=    Create Dictionary    username=${username}    password=${password}     
-    Create Session    auth_wrong_content    ${BASE_URL}    headers={"Content-Type":"text/plain"}    
-    POST On Session    auth_wrong_content    ${LOGIN_ENDPOINT}    ${body}    
-
+    [Arguments]    ${username}    ${password}    ${content_type}
+    &{payload}=    Create Dictionary    username=${username}    password=${password}     
+    Create Session    auth_wrong_content    ${BASE_URL}    headers={"Content-Type":"${content_type}"}
+    ${response}=    POST On Session    auth_wrong_content    ${LOGIN_ENDPOINT}    data=${payload}    expected_status=any    
+    RETURN    ${response}
 
 Create Authenticated Session
     [Documentation]    Creates an authenticated session with a token.
     ${access_token}    ${refresh_token}=    Login And Get Tokens
     Create Session    api_auth    ${BASE_URL}    headers={"Authorization":"Bearer ${access_token}","Content-Type":"application/json"}
-

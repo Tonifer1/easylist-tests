@@ -9,13 +9,9 @@ ${BROWSER}    chrome
 *** Keywords ***
 Open My Browser
     [Arguments]    ${BROWSER}
-    Open Browser    http://localhost:4173/    ${BROWSER}
-    Maximize Browser Window
+    Open Browser    http://localhost:4173/    ${BROWSER}    options=add_argument(--headless);add_argument(--disable-gpu)
     Wait Until Page Contains    EasyList    10s
+
 
 Close My Browser
     Close Browser
-
-
-
-

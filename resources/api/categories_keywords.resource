@@ -24,8 +24,8 @@ Create Category And Save Id
     ${payload}=    Create Dictionary    category_name=${category_name}    #7.Builds payload: {"category_name": "cat_name1755701234"}.
     ${response}=       POST On Session    api_auth    ${CATEGORIES_ENDPOINT}    json=${payload}    # Sends POST /api/categories/
     Should Be Equal As Integers    ${response.status_code}    201    #Response:{"category_id": 27, "category_name": "cat_name1755701234"} 
-    ${body}=       Set Variable    ${response.json()}
-    ${category_id}=         Get From Dictionary    ${body}    category_id    # Pick created category_id = for example 27   
+    ${json}=       Set Variable    ${response.json()}
+    ${category_id}=         Get From Dictionary    ${json}    category_id    # Pick created category_id = for example 27   
     RETURN       ${category_id}    #Return value example ${category_id}=27  to --> products_test.robot
 
 # 3) UPDATE
@@ -35,8 +35,8 @@ Patch Category Name
     Create Authenticated Session
     ${payload}=    Create Dictionary    category_name=${new_name}
     ${response}=    PATCH On Session    api_auth    ${CATEGORIES_ENDPOINT}${category_id}/    json=${payload}
-    ${body}=    Set Variable    ${response.json()}
-    ${category_name}=    Get From Dictionary    ${body}    category_name
+    ${json}=    Set Variable    ${response.json()}
+    ${category_name}=    Get From Dictionary    ${json}    category_name
     RETURN    ${category_name}
 
 # 4) DELETE
@@ -63,8 +63,9 @@ Delete Category Twice By Id
 
 Delete Category If Exists
     [Arguments]    ${category_id}
-    Run Keyword If    '${category_id}' != 'None'
-    ...    DELETE On Session    api_auth    /api/categories/${category_id}/    expected_status=any
+    IF    $category_id is not None
+        Run Keyword And Ignore Error    DELETE On Session    api_auth    /api/categories/${category_id}/    expected_status=any
+    END
 
 Verify Category Structure In Response
     [Arguments]    ${response}

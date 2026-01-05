@@ -52,8 +52,8 @@ Create Product With CategoryId
     # Creates payload: {"product_name": "Test-Product-1755701234",  "category": 27}
     ${response}=       POST On Session    api_auth    ${PRODUCTS_ENDPOINT}    json=${payload}
     Should Be Equal As Integers    ${response.status_code}    201
-    ${body}=       Set Variable    ${response.json()}
-    ${product_id}=        Get From Dictionary    ${body}    product_id    
+    ${json}=       Set Variable    ${response.json()}
+    ${product_id}=        Get From Dictionary    ${json}    product_id    
 
     Log    ${product_id}        
     RETURN       ${product_id}
@@ -64,17 +64,22 @@ Patch Product Name
     Create Authenticated Session    
     ${payload}=    Create Dictionary    product_name=${new_name}
     ${response}=       PATCH On Session    api_auth    ${PRODUCTS_ENDPOINT}${product_id}/    json=${payload}
-    ${body}=       Set Variable    ${response.json()}
-    ${product_name}=    Get From Dictionary    ${body}    product_name
+    ${json}=       Set Variable    ${response.json()}
+    ${product_name}=    Get From Dictionary    ${json}    product_name
     RETURN    ${product_name}
 
 # 4) DELETE
 Delete Product If Exists
     [Arguments]    ${product_id}
     Log    Checking product_id: ${product_id}
-    Run Keyword If    '${product_id}' != 'None'
-    ...    DELETE On Session    api_auth    /api/products/${product_id}/    expected_status=any        
+    IF    $product_id is not None
+        Run Keyword And Ignore Error    DELETE On Session    api_auth    /api/products/${product_id}/    expected_status=any
+    END 
 
+
+Delete Product And Expect 404
+    [Arguments]    ${product_id}
+    DELETE On Session    api_auth    /api/products/${product_id}/    expected_status=404 
 
 Teardown Product And Category
     [Arguments]    ${product_id}    ${category_id}
@@ -125,8 +130,8 @@ Verify Unauthorized Response
     [Arguments]    ${response}
     Should Start With    ${response.headers}[Content-Type]    application/json
     Should Start With    ${response.headers}[WWW-Authenticate]    Bearer
-    ${body}=    Set Variable    ${response.json()}
-    Dictionary Should Contain Key    ${body}    detail
+    ${json}=    Set Variable    ${response.json()}
+    Dictionary Should Contain Key    ${json}    detail
     Should Be Equal As Numbers    ${response.status_code}    401
 
 Verify Products Are Filtered By Category

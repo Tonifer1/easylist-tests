@@ -36,37 +36,25 @@ Refresh Token Succeeds And Returns Token
     
 Unauthorized Request With Invalid Access Token
     [Documentation]    Verifies that protected endpoint returns 401 when access token is invalid.
-    [Tags]    api    auth    security    unauthorized    
-    [Teardown]    Delete Category If Exists    ${category_id}
-    Set Test Variable    ${category_id}    ${None}
-    VAR    ${category_name}    cat_test_token
-    VAR    ${invalid_token}    invalid
-    ${category_id}=    Create Category And Save Id    ${category_name}
+    [Tags]    api    auth    security    unauthorized        
+    VAR    ${invalid_token}    invalid 
     Create Session    api_auth_invalid_token    ${BASE_URL}    headers={"Authorization":"Bearer ${invalid_token}","Content-Type":"application/json"}
     ${response}=    GET On Session    api_auth_invalid_token    ${CATEGORIES_ENDPOINT}    expected_status=401
-    Log    Created: category id=${category_id}, category name=${category_name}
+    Should Contain    ${response.json()}[detail]    Given token not valid for any token type
+   
 
 Unauthorized Request Without Headers
     [Documentation]    Verifies that protected endpoint returns 401 with empty headers
     [Tags]    api    auth    security    unauthorized    
-    [Teardown]    Delete Category If Exists    ${category_id}
-    Set Test Variable    ${category_id}    ${None}
-    VAR    ${category_name}    cat_test_no_headers
-    ${category_id}=    Create Category And Save Id    ${category_name}
-    Create Session    api_auth_no_headers    ${BASE_URL}    headers={}
-    ${response}=    GET On Session    api_auth_no_headers    ${CATEGORIES_ENDPOINT}    expected_status=401
-    Log    Created: category id=${category_id}, category name=${category_name}
+    Create Session    api_no_auth    ${BASE_URL}    headers={}
+    GET On Session    api_no_auth    ${CATEGORIES_ENDPOINT}    expected_status=401
 
-Unauthorized request with refresh token in Authorization header returns 401
-    [Documentation]    Verifies that protected endpoint returns 401 with refresh token in Authorization 
-    [Tags]    api    auth    security    unauthorized    wrong_refresh
-    [Teardown]    Delete Category If Exists    ${category_id}
-    Set Test Variable    ${category_id}    ${None}
-    VAR    ${category_name}    cat_test_wrong_token
-    ${category_id}=    Create Category And Save Id    ${category_name}
+Unauthorized Request With Refresh Token In Authorization Header
+    [Documentation]    Verifies that protected endpoint returns 401 when using a refresh token instead of an access token.
+    [Tags]    api    auth    security    unauthorized    wrong_refresh    huti
     ${_}    ${refresh_token}=    Login And Get Tokens
-    Create Session    api_auth_wrong_token    ${BASE_URL}    headers={"Authorization":"Bearer ${refresh_token}","Content-Type":"application/json"}
-    ${response}=    GET On Session    api_auth_wrong_token    ${CATEGORIES_ENDPOINT}    expected_status=401
+    Create Session    api_wrong_token    ${BASE_URL}    headers={"Authorization":"Bearer ${refresh_token}"}
+    GET On Session    api_wrong_token    ${CATEGORIES_ENDPOINT}    expected_status=401
 
 
 Login With Wrong Credentials
@@ -106,6 +94,8 @@ Login Without Body Should Fail
     Run Keyword And Expect Error    *Client Error*    Login Without Body
 
 Login With Invalid Content-Type
-    [Documentation]    Attempts login with invalid content-type
+    [Documentation]    Ensures API error handling for unsupported request media types.
     [Tags]    api    auth    error    wrong_content_type
-    Run Keyword And Expect Error    *Client Error*    Login With Wrong Content-Type    ${USERNAME}    ${PASSWORD}
+    ${response}=    Login With Wrong Content-Type    ${USERNAME}    ${PASSWORD}    text/plain
+    Should Be Equal As Integers    ${response.status_code}    415
+    Should Contain    ${response.json()}[detail]    Unsupported media type
