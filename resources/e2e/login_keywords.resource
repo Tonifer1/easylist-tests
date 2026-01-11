@@ -1,53 +1,42 @@
 *** Settings ***
-Library    SeleniumLibrary
-
-*** Variables ***
-${BROWSER}    chrome
-
-
+Library    Browser
 
 *** Keywords ***
 
-
 Click Login Link
-    Click Element    id=login-link
+    Click    id=login-link
 
 Click Logout Link
-    Click Element    id=logout-link
+    Click    id=logout-link
 
 Input Username And Password
-    [Documentation]    Username and Passoword
+    [Documentation]    Username and Password
     [Arguments]    ${username}    ${password}
-    Wait Until Element Is Visible    id=username     7s
-    Input Text    id=username    ${username}
-    Input Text    id=password    ${password}
+    Wait For Elements State    id=username    visible    7s
+    Fill Text    id=username    ${username}
+    Fill Text    id=password    ${password}
 
 Submit Login
-    Click Button    id=login-button
+    Click    id=login-button
 
 Login Should Succeed
-    Wait Until Page Contains    Tuotteet    7s
-    Page Should Contain    Tuotteet
+    Wait For Elements State    text=Tuotteet    visible    7s
+    Get Text    text=Tuotteet
 
 Logout Should Succeed
-    ${status}    ${msg}=    Run Keyword And Ignore Error    Wait Until Page Contains Element    id=login-link    10s
-    Run Keyword If    '${status}'=='FAIL'    Debug Snapshot
-    Should Be Equal    ${status}    PASS
-
+    Wait For Elements State    id=login-link    visible    10s
 
 Login Should Fail
-    Wait Until Page Contains    Virheelliset tunnukset    7s
-    Page Should Contain    Virheelliset tunnukset
+    Wait For Elements State    text=Virheelliset tunnukset    visible    7s
+    Get Text    text=Virheelliset tunnukset
 
 Login Should Fail With Empty Credentials
-    ${required}=    Get Element Attribute    id=username    required
-    Should Be Equal    ${required}    true 
-    Page Should Not Contain    Products
+    Get Property    id=username    required    ==    ${True}
+    Wait For Elements State    text=Tuotteet    hidden    2s
 
 
 
 Debug Snapshot
-    ${url}=    Get Location
+    ${url}=    Get Url
     Log    URL: ${url}
-    Capture Page Screenshot
-    Log     Page Source  
+    Take Screenshot

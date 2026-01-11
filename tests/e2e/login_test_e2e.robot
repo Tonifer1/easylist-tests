@@ -1,7 +1,7 @@
 *** Settings ***
 Resource    ../../resources/e2e/open_browser_keywords.resource
 Resource    ../../resources/e2e/login_keywords.resource
-Test Setup    Open My Browser    ${BROWSER}
+Test Setup    Open My Browser    
 Test Teardown    Close My Browser
 
 *** Variables ***
@@ -13,9 +13,8 @@ ${SPECIAL_CHARS}    ¤#%&/()
 
 *** Test Cases ***
 Login With Valid Credentials Should Succeed
-    [Tags]    e2e    selenium    login
+    [Tags]    smoke    e2e    browser    login
     Click Login Link
-    Wait Until Element Is Visible    id=username    7s
     Input Username And Password    ${VALID_USERNAME}    ${VALID_PASSWORD}
     Log To Console    ${VALID_USERNAME}    ${VALID_PASSWORD}    
     Submit Login
@@ -24,33 +23,29 @@ Login With Valid Credentials Should Succeed
     Logout Should Succeed
 
 Login With Invalid Username Should Fail
-    [Tags]    e2e    selenium    login    error
+    [Tags]    e2e    browser    login    error
     Click Login Link
-    Wait Until Element Is Visible    id=username    7s
     Input Username And Password    ${INVALID_USERNAME}    ${VALID_PASSWORD}
     Submit Login
     Login Should Fail
 
 Login With Invalid Password Should Fail
-    [Tags]    e2e    selenium    login    error
+    [Tags]    e2e    browser    login    error
     Click Login Link
-    Wait Until Element Is Visible    id=username    7s
     Input Username And Password    ${VALID_USERNAME}    ${INVALID_PASSWORD}
     Submit Login
     Login Should Fail
 
- Login With Special Characters Should Fail
-    [Tags]    e2e    selenium    login    error
+Login With Special Characters Should Fail
+    [Tags]    e2e    browser    login    error
     Click Login Link
-    Wait Until Element Is Visible    id=username    7s
     Input Username And Password    ${SPECIAL_CHARS}    ${SPECIAL_CHARS}
     Submit Login
     Login Should Fail
 
- Login With Empty Credentials
-    [Tags]    e2e    selenium    login    error
+Login With Empty Credentials
+    [Tags]    e2e    browser    login    error
     Click Login Link
-    Wait Until Element Is Visible    id=username    7s
     Input Username And Password    ${EMPTY}    ${EMPTY}
     Submit Login
     Login Should Fail With Empty Credentials
