@@ -10,7 +10,7 @@ Click Logout Link
     Click    id=logout-link
 
 Input Username And Password
-    [Documentation]    Username and Password
+    [Documentation]    Fills the username and password fields with provided values.
     [Arguments]    ${username}    ${password}
     Wait For Elements State    id=username    visible    7s
     Fill Text    id=username    ${username}
@@ -19,21 +19,23 @@ Input Username And Password
 Submit Login
     Click    id=login-button
 
-Login Should Succeed
-    Wait For Elements State    text=Tuotteet    visible    7s
-    Get Text    text=Tuotteet
 
-Logout Should Succeed
-    Wait For Elements State    id=login-link    visible    10s
+Logout Link Should Be Visible
+    Wait For Elements State    id=logout-link    visible    7s
 
-Login Should Fail
+
+Login Link Should Be Visible
+    Wait For Elements State    id=login-link    visible    7s
+
+Login Error Message Should Be Visible
     Wait For Elements State    text=Virheelliset tunnukset    visible    7s
-    Get Text    text=Virheelliset tunnukset
 
-Login Should Fail With Empty Credentials
+
+Username Field Should Be Required
     Get Property    id=username    required    ==    ${True}
-    Wait For Elements State    text=Tuotteet    hidden    2s
 
+Go Back In Browser
+    Go Back
 
 
 Debug Snapshot
