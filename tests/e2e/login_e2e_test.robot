@@ -1,6 +1,6 @@
 *** Settings ***
-Resource    ../../resources/e2e/open_browser_keywords.resource
-Resource    ../../resources/e2e/login_keywords.resource
+Resource    ../../resources/e2e/open_browser_e2e_keywords.resource
+Resource    ../../resources/e2e/login_e2e_keywords.resource
 Test Setup    Open My Browser    
 Test Teardown    Close My Browser
 
