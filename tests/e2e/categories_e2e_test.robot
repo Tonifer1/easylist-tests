@@ -13,7 +13,7 @@ ${VALID_PASSWORD}    %{API_PASSWORD}
 Categories page should show categories list for logged-in user
     [Documentation]    Verifies that a logged-in user can navigate to the Categories page 
     ...                and that the Categories view is rendered successfully.
-    [Tags]    e2e    smoke    browser    categories    
+    [Tags]    e2e    regression    categories    
     Click Login Link
     Input Username And Password    ${VALID_USERNAME}    ${VALID_PASSWORD}
     Submit Login
@@ -22,7 +22,7 @@ Categories page should show categories list for logged-in user
     Open Categories Link Should Be Visible
 
 User can create and delete category
-    [Tags]    e2e    create    browser    categories2
+    [Tags]    e2e    regression    create    categories2
     Click Login Link
     Input Username And Password    ${VALID_USERNAME}    ${VALID_PASSWORD}
     Submit Login

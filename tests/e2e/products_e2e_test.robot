@@ -12,7 +12,7 @@ ${VALID_PASSWORD}    %{API_PASSWORD}
 Products page should show product list for logged-in user
     [Documentation]    Verifies that a logged-in user can navigate to the Products page 
     ...                and that the Products view is rendered successfully.
-    [Tags]    e2e    smoke    browser    seppo    
+    [Tags]    e2e    regression        
     Click Login Link
     Input Username And Password    ${VALID_USERNAME}    ${VALID_PASSWORD}
     Submit Login

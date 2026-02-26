@@ -15,7 +15,7 @@ Resource    ../resources/api/categories_keywords.resource
 # 1) CREATE   
 Create Category and Product
     [Documentation]    Creates a temporary category and product and then deletes them.
-    [Tags]    api    products    create    smoke
+    [Tags]    api    smoke    regression    crud
     Set Test Variable    ${product_id}    ${None}
     Set Test Variable    ${category_id}   ${None}
     [Teardown]    Teardown Product And Category    ${product_id}    ${category_id}
@@ -30,7 +30,7 @@ Create Category and Product
 # 2) READ
 Get Products Should Return Valid Data
     [Documentation]    Verify products API returns valid product data
-    [Tags]    api    products    read    smoke
+    [Tags]    api    smoke    regression    read
     ${category_id}=    Create Category And Save Id    Read_Setup_Category
     ${product_id}=    Create Product With CategoryId    Read_Setup_Product    ${category_id}
     [Teardown]    Teardown Product And Category    ${product_id}    ${category_id}
@@ -39,7 +39,7 @@ Get Products Should Return Valid Data
 
 Fetch Products By Name
     [Documentation]    Verify products by name
-    [Tags]    api    products    read    smoke    
+    [Tags]    api    regression    products    read        
     ${category_id}=    Create Category And Save Id    Name_Category
     ${product_id}=    Create Product With CategoryId    By_Name_Product    ${category_id}
     [Teardown]    Teardown Product And Category    ${product_id}    ${category_id}
@@ -48,7 +48,7 @@ Fetch Products By Name
 
 Fetch Products By Id
     [Documentation]    Verify products by id
-    [Tags]    api    products    read    smoke    id
+    [Tags]    api    regression    products    read    id
     ${category_id}=    Create Category And Save Id    Id_Category
     ${product_id}=    Create Product With CategoryId    By_Id_Product    ${category_id}
     [Teardown]    Teardown Product And Category    ${product_id}    ${category_id}
@@ -61,7 +61,7 @@ Fetch Products By Id
 # 3) UPDATE
 PATCH Product 
     [Documentation]    Creates a temporary category and product, Updates the Product name and then deletes them.
-    [Tags]    api    products    patch    smoke 
+    [Tags]    api    regression    products    patch     
     Set Test Variable    ${product_id}    ${None}
     Set Test Variable    ${category_id}   ${None}   
     [Teardown]    Teardown Product And Category    ${product_id}    ${category_id}
@@ -78,7 +78,7 @@ PATCH Product
 # 4) DELETE
 DELETE Product
     [Documentation]    Creates a temporary category and product, and deletes them.  
-    [Tags]    api    products    delete    smoke    
+    [Tags]    api    regression    products    delete        
     Set Test Variable    ${product_id}    ${None}
     Set Test Variable    ${category_id}   ${None}   
     [Teardown]    Teardown Product And Category    ${product_id}    ${category_id}
@@ -91,7 +91,7 @@ DELETE Product
 
 DELETE Product Twice Should Return 404
     [Documentation]    Verify that deleting the same product twice returns a proper 404 Not Found response.  
-    [Tags]    api    products    delete    smoke    twices
+    [Tags]    api    regression    products    delete    twices
     Set Test Variable    ${product_id}    ${None}
     Set Test Variable    ${category_id}   ${None}   
     [Teardown]    Teardown Product And Category    ${product_id}    ${category_id}
@@ -111,14 +111,14 @@ DELETE Product Twice Should Return 404
 
 No Token 
     [Documentation]     Try To Get Products without Login and Token
-    [Tags]    api    auth    security    error    no_token
+    [Tags]    api    regression    security
     Create Session    api_auth_no_token    ${BASE_URL}
     ${response}=    GET On Session    api_auth_no_token    ${PRODUCTS_ENDPOINT}    expected_status=401
     Verify Unauthorized Response    ${response}
     
 Create And Verify Multiple Products In Category
     [Documentation]    Creates a temporary products and category. Get products by category ID.
-    [Tags]    api    products    multi    cleanup    regression
+    [Tags]    api    regression    products    multi    cleanup    
     Set Test Variable    ${category_id}   ${None}
     Set Test Variable    @{product_ids}   @{EMPTY}
     [Teardown]    Teardown Multiple Products And Category    ${category_id}    @{product_ids}
@@ -142,7 +142,7 @@ Create And Verify Multiple Products In Category
 
 Get Products By Category Should Return Only Matching Products
     [Documentation]    Verifies that products are correctly filtered by category and that products from other categories are excluded.
-    [Tags]    api    products    filtering    regression    
+    [Tags]    api    regression    products    filtering       
     ${category_name}=    Set Variable   a_category
     ${category_id_a}    Create Category And Save Id    ${category_name}
     ${category_name}=    Set Variable   b_category

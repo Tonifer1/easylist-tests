@@ -14,7 +14,7 @@ Resource    ../../resources/api/products_keywords.resource
 *** Test Cases ***
 Get Categories Should Return Valid Data
     [Documentation]    Verify categories API returns valid data
-    [Tags]    api    categories    reads    smoke
+    [Tags]    api    regression    categories    read    
     ${category_id}=    Create Category And Save Id    Read_Setup_Category
     ${response}=    Fetch Categories
     Verify Category Structure In Response    ${response}
@@ -25,7 +25,7 @@ Get Categories Should Return Valid Data
 Create Category
     [Teardown]    Delete Category If Exists    ${category_id}    
     [Documentation]    Create category and delete it
-    [Tags]    api    categories    create    smoke
+    [Tags]    api    regression    categories    create    
     Set Test Variable    ${category_id}    ${None}
     VAR    ${category_name}    cat_test_create
     ${category_id}=    Create Category And Save Id    ${category_name}
@@ -35,7 +35,7 @@ Create Category
 Patch Category Name
     [Teardown]    Delete Category If Exists    ${category_id}
     [Documentation]    Create category, update and delete it.
-    [Tags]    api    categories    update    smoke
+    [Tags]    api    regression    categories    update    
     Set Test Variable    ${category_id}    ${None}
     VAR    ${category_name}      cat_test_update
     ${category_id}=    Create Category And Save Id    ${category_name}
@@ -48,7 +48,7 @@ Patch Category Name
 # 4) DELETE
 Delete Existing Category Should Succeed
     [Documentation]    Create temporary category and delete it
-    [Tags]    api    categories    delete    smoke
+    [Tags]    api    regression    categories    delete    
     Set Test Variable    ${category_id}    ${None}
     VAR    ${category_name}      cat_test_delete
     ${category_id}=    Create Category And Save Id    ${category_name}
@@ -58,7 +58,7 @@ Delete Existing Category Should Succeed
 
 Delete Category Twice Should Return 404
     [Documentation]    Create temporary category and try delete it twice
-    [Tags]    api    categories    error    twice    smoke
+    [Tags]    api    regression    categories    error    twice    
     Set Test Variable    ${category_id}    ${None}
     VAR    ${category_name}      cat_test_delete_twice
     ${category_id}=    Create Category And Save Id    ${category_name}
@@ -67,7 +67,7 @@ Delete Category Twice Should Return 404
 
 Delete Category Without Token Should Return 401
     [Documentation]    Try to delete Category without Login and Token
-    [Tags]    api    categories    error    no_token    smoke
+    [Tags]    api    regression    security    
     Set Test Variable    ${category_id}    ${None}
     VAR    ${category_name}      cat_test_delete_no_token2
     ${category_id}=    Create Category And Save Id    ${category_name}
@@ -76,7 +76,7 @@ Delete Category Without Token Should Return 401
 
 No Token 
     [Documentation]    Try to Get Categories without Login and Token
-    [Tags]    api    categories    read    error    smoke
+    [Tags]    api    regression    categories    read    error    
     Create Session    api_auth_no_token    ${BASE_URL}
     ${response}=    GET On Session    api_auth_no_token    ${CATEGORIES_ENDPOINT}    expected_status=401
     Verify Unauthorized Response    ${response}      

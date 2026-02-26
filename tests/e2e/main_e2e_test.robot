@@ -12,5 +12,5 @@ Test Teardown    Close My Browser
 *** Test Cases ***
 Main Page Should Be Ready
     [Documentation]    EasyList Main page should open
-    [Tags]    e2e    smoke    browser    main
+    [Tags]    e2e    smoke    regression    main
     Login Link Should Be Visible    
